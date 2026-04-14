@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영어 선생님을 위한 AI & 에듀테크 마스터 클래스</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; scroll-behavior: smooth; background-color: #f1f5f9; }
+        .nav-link { transition: all 0.2s ease-in-out; }
+        .nav-link:hover { color: #3b82f6; transform: translateY(-2px); }
+        .step-box { border-left: 4px solid #cbd5e1; transition: border-color 0.3s ease; }
+        .step-box:hover { border-left-color: #3b82f6; }
+        .prompt-box { background: #f8fafc; border: 1px solid #e2e8f0; position: relative; }
+        .prompt-box::before {
+            content: "💡 Prompt";
+            position: absolute;
+            top: -12px;
+            left: 16px;
+            background: #3b82f6;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        /* Sticky Header */
+        .sticky-nav { position: sticky; top: 0; z-index: 50; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+
+        /* --- 추가된 자료용 CSS (광주아이온 & 유치원 연수 코드 통합) --- */
+        .content-card {
+            background: white;
+            border-radius: 2rem;
+            border: 1px solid rgba(226, 232, 240, 0.7);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.03);
+            margin-bottom: 2.5rem;
+            overflow: hidden; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px -10px rgba(59, 130, 246, 0.1);
+        }
+        .card-header {
+            padding: 1.25rem 2rem;
+            border-bottom: 2px dashed #f1f5f9;
+            background: linear-gradient(to right, #f8fafc, #ffffff);
+        }
+        .card-body { padding: 2rem; }
+        .prompt-block {
+            background-color: #1e293b;
+            color: #f1f5f9;
+            border-radius: 1.25rem;
+            padding: 1.25rem;
+            font-family: 'Courier New', Courier, monospace;
+            position: relative;
+            line-height: 1.7;
+            word-break: break-all;
+            margin-bottom: 1.25rem;
+            border: 1px solid #334155;
+            font-size: 14px;
+        }
+        .copy-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: #475569;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.7rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        .copy-button:hover { 
+            background-color: #3b82f6;
+            transform: scale(1.05);
+        }
+        .pro-tip {
+            background-color: #fffbeb;
+            border-left: 6px solid #fbbf24;
+            color: #92400e;
+            padding: 1.25rem;
+            border-radius: 1.25rem;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        }
+        .copy-btn { transition: all 0.2s ease-in-out; }
+        .copied { background-color: #4ade80 !important; color: white !important; }
+        .prompt-card { background: #fdf2f8; border: 1px solid #fbcfe8; border-left: 5px solid #f472b6; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Top Banner -->
+    <header class="bg-gradient-to-r from-blue-800 via-blue-600 to-indigo-700 text-white py-16 px-6 text-center shadow-lg">
+        <div class="max-w-4xl mx-auto">
+            <span class="bg-white/20 text-white px-4 py-1 rounded-full text-sm font-bold tracking-wider mb-4 inline-block">종합 에듀테크 가이드</span>
+            <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">퇴근 시간을 당겨주는<br>AI & 에듀테크 마스터 클래스 <i class="fas fa-magic ml-2 text-yellow-300"></i></h1>
+            <p class="text-xl opacity-90 mb-8">클릭 한 번으로 끝나는 지문 생성부터 각종 행정, 통합 심화 기능까지 이 페이지 하나로 마스터하세요.</p>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="sticky-nav py-4 px-6 border-b border-slate-200">
+        <div class="max-w-6xl mx-auto flex justify-center space-x-6 md:space-x-12 font-bold text-slate-600 overflow-x-auto whitespace-nowrap">
+            <a href="#canva" class="nav-link"><i class="fas fa-palette mr-1 text-cyan-500"></i> 1. 캔바 (디자인)</a>
+            <a href="#padlet" class="nav-link"><i class="fas fa-columns mr-1 text-pink-500"></i> 2. 패들렛 (소통)</a>
+            <a href="#gemini" class="nav-link"><i class="fas fa-brain mr-1 text-blue-500"></i> 3. 제미나이 (통합)</a>
+            <a href="#notebooklm" class="nav-link"><i class="fas fa-book-reader mr-1 text-indigo-500"></i> 4. NotebookLM (통합)</a>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-6 mt-8 space-y-16">
+        
+        <!-- 1. Canva Section -->
+        <section id="canva" class="bg-white rounded-3xl p-8 shadow-sm border-t-8 border-cyan-400 scroll-mt-24">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-cyan-100 text-cyan-600 p-4 rounded-2xl text-3xl"><i class="fas fa-palette"></i></div>
+                <div>
+                    <h2 class="text-3xl font-bold">1. Canva (캔바) 완벽 가이드</h2>
+                    <p class="text-slate-500">디자인 감각이 없어도 전문가 수준의 영어 학습지와 PPT를 만듭니다.</p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 mt-8">
+                <div class="space-y-6">
+                    <div class="step-box pl-6">
+                        <h4 class="font-bold text-lg text-cyan-700 mb-2">Step 1. 교육용 무료 계정 인증받기</h4>
+                        <p class="text-slate-600 text-sm">교사 인증을 받으면 유료(Pro) 기능을 모두 무료로 사용합니다.<br>
+                        1) Canva 접속 후 우측 상단 <strong>'가입'</strong> 클릭<br>
+                        2) 공직자 메일(korea.kr) 또는 학교 이메일로 가입<br>
+                        3) 설정 > 청구 및 요금제 > <strong>'교육용 무료 이용 신청'</strong> 클릭 및 교원증 업로드</p>
+                    </div>
+                    <div class="step-box pl-6">
+                        <h4 class="font-bold text-lg text-cyan-700 mb-2">Step 2. 영어 워크시트(학습지) 1분 완성</h4>
+                        <p class="text-slate-600 text-sm">
+                        1) 상단 검색창에 <strong>"영어 단어장"</strong> 또는 <strong>"English Worksheet"</strong> 검색<br>
+                        2) 마음에 드는 템플릿 클릭 후 '이 템플릿 맞춤형으로 제작'<br>
+                        3) 텍스트를 더블클릭하여 이번 단원 영단어로 수정 후 우측 상단 <strong>'공유 -> 다운로드(PDF)'</strong> 클릭
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex flex-col justify-center">
+                    <h4 class="font-bold text-center text-cyan-800 mb-4"><i class="fas fa-magic mr-2"></i> 초간단 팁: 매직 프레젠테이션</h4>
+                    <p class="text-sm text-slate-600 mb-4">Canva 첫 화면에서 <strong>'매직 디자인'</strong>을 클릭하고 아래 문장을 입력해 보세요. AI가 자동으로 디자인된 10장의 슬라이드를 만들어 줍니다.</p>
+                    <div class="bg-white p-3 rounded border text-sm text-slate-700 italic">
+                        "고등학교 1학년 영어 관계대명사(who, which, that)의 개념과 예문을 설명하는 프레젠테이션을 만들어줘. 밝고 캐주얼한 톤으로."
+                    </div>
+                    <a href="https://www.canva.com/ko_kr/education/" target="_blank" class="mt-4 text-center bg-cyan-500 text-white py-2 rounded-lg hover:bg-cyan-600 transition">Canva 교육용 바로가기</a>
+                </div>
+            </div>
+
+            <!-- 새로 추가된 고등학교 캔바 심화 내용 -->
+            <div class="mt-12 pt-8 border-t-2 border-dashed border-slate-200">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-cyan-500 pl-3">🔥 고등학교 교실을 위한 Canva 심화 응용법</h3>
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-cyan-700 mb-3 text-lg"><i class="fas fa-layer-group mr-2"></i>대량 제작(Bulk Create)</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">영어 단어 플래시카드, 교과 우수상 등을 1분 만에 수십 장 자동 생성합니다.</p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="font-bold text-slate-700 text-sm mb-2"><i class="fas fa-check-circle text-cyan-500 mr-1"></i> 세부 절차 따라하기</p>
+                            <ol class="list-decimal list-inside space-y-2 text-xs text-slate-700">
+                                <li>디자인 템플릿(상장, 단어장 등) 열기</li>
+                                <li>좌측 가장 아래 메뉴 <b>'앱'</b> > <b>'대량 제작'</b> 검색 후 클릭</li>
+                                <li><b>'수동으로 데이터 입력'</b> 선택 후 명단/단어 표 작성</li>
+                                <li>디자인 텍스트 요소 우클릭 > <b>'데이터 연결'</b> 클릭하여 매핑</li>
+                                <li>좌측 하단 <b>'디자인 생성'</b> 버튼 클릭!</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-cyan-700 mb-3 text-lg"><i class="fas fa-book-open mr-2"></i>수행평가 포트폴리오</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">학생들의 영작 과제를 모아 '웹사이트'나 '플립북' 형태로 발행합니다.</p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="font-bold text-slate-700 text-sm mb-2"><i class="fas fa-check-circle text-cyan-500 mr-1"></i> 세부 절차 따라하기</p>
+                            <ol class="list-decimal list-inside space-y-2 text-xs text-slate-700">
+                                <li>'프레젠테이션' 템플릿으로 새 디자인 만들기</li>
+                                <li>학생별 슬라이드에 에세이/결과물 텍스트 추가</li>
+                                <li>작업 완료 후 우측 상단 <b>'공유'</b> 버튼 클릭</li>
+                                <li><b>'더보기'</b> > <b>'웹사이트'</b>(내비게이션형) 선택 후 링크 배포</li>
+                                <li>또는 앱 메뉴에서 <b>'Heyzine Flipbooks'</b> 연결하여 전자책으로 공유</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h4 class="font-bold text-cyan-700 mb-3 text-lg"><i class="fas fa-chart-pie mr-2"></i>개념 요약 인포그래픽</h4>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">복잡한 영문법이나 수능 지문 구조를 시각화하여 이해도를 극대화합니다.</p>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="font-bold text-slate-700 text-sm mb-2"><i class="fas fa-check-circle text-cyan-500 mr-1"></i> 세부 절차 따라하기</p>
+                            <ol class="list-decimal list-inside space-y-2 text-xs text-slate-700">
+                                <li>메인 검색창에 <b>'인포그래픽'</b> 또는 <b>'마인드맵'</b> 검색</li>
+                                <li>지문 구조에 맞는 템플릿(타임라인, 프로세스형) 선택</li>
+                                <li>텍스트를 영문법(관계사, 가정법 등) 핵심 개념으로 수정</li>
+                                <li>좌측 <b>'요소'</b> 탭에서 'grammar', 'arrow' 등 검색 후 시각 자료 추가</li>
+                                <li>우측 상단 <b>'공유'</b> > 다운로드(PDF 표준) 하여 유인물로 배포</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Padlet Section -->
+        <section id="padlet" class="bg-white rounded-3xl p-8 shadow-sm border-t-8 border-pink-400 scroll-mt-24">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-pink-100 text-pink-600 p-4 rounded-2xl text-3xl"><i class="fas fa-columns"></i></div>
+                <div>
+                    <h2 class="text-3xl font-bold">2. Padlet (패들렛) 실전 활용</h2>
+                    <p class="text-slate-500">학생들의 영작 과제나 의견을 실시간으로 한 화면에 모으는 디지털 담벼락입니다.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mt-8">
+                <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                    <h4 class="font-bold text-pink-800 mb-4"><i class="fas fa-chalkboard mr-2"></i> 영어 수업 추천 레이아웃 3가지</h4>
+                    <ul class="space-y-4 text-sm text-slate-600">
+                        <li><strong class="text-slate-800">1. 캔버스 (마인드맵형):</strong> 영어 단어 연상 퀴즈나 그룹별 브레인스토밍에 적합합니다. 포스트잇을 선으로 연결할 수 있습니다.</li>
+                        <li><strong class="text-slate-800">2. 칼럼 (단락형):</strong> 찬반 토론(Agree/Disagree)이나, 조별(Group 1, Group 2) 영작 과제 제출용으로 아주 좋습니다.</li>
+                        <li><strong class="text-slate-800">3. 타임라인:</strong> 영어 스토리텔링 수업 시, 사건의 순서대로 영문장을 나열해보는 활동에 최적화되어 있습니다.</li>
+                    </ul>
+                </div>
+                <div class="space-y-6">
+                    <div class="step-box pl-6">
+                        <h4 class="font-bold text-lg text-pink-700 mb-2">Step 1. 학생 참여 유도하기 (No 로그인)</h4>
+                        <p class="text-slate-600 text-sm">학생들은 가입할 필요가 없습니다!<br>
+                        1) 패들렛 생성 후 우측 상단 <strong>'공유'</strong> 아이콘 클릭<br>
+                        2) <strong>'QR 코드 받기'</strong> 클릭 후 화면에 띄워주기<br>
+                        3) 스마트폰 카메라로 QR 스캔 시 바로 글쓰기 가능</p>
+                    </div>
+                    <div class="step-box pl-6">
+                        <h4 class="font-bold text-lg text-pink-700 mb-2">Step 2. 영작 피드백 설정하기</h4>
+                        <p class="text-slate-600 text-sm">
+                        설정(톱니바퀴) 메뉴에서 <strong>'댓글'</strong>과 <strong>'반응(별점, 좋아요 등)'</strong>을 켜두세요. 학생들이 서로의 영문장에 피드백을 남기는 동료 평가가 가능해집니다.
+                        </p>
+                    </div>
+                    <a href="https://padlet.com/" target="_blank" class="block text-center bg-pink-500 text-white py-2 rounded-lg hover:bg-pink-600 transition">Padlet 시작하기</a>
+                </div>
+            </div>
+
+            <!-- 새로 추가된 고등학교 패들렛 심화 내용 -->
+            <div class="mt-12 pt-8 border-t-2 border-dashed border-slate-200">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-pink-500 pl-3">🔥 고등학교 맞춤형 Padlet 심화 응용법</h3>
+                <div class="space-y-4">
+                    <details class="bg-gray-50 p-5 rounded-xl cursor-pointer border border-slate-200">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 찬반 토론(Debate) 및 동료 평가 (칼럼 레이아웃)</summary>
+                        <div class="mt-4 text-slate-700 leading-relaxed text-sm flex flex-col md:flex-row gap-6">
+                            <div class="flex-1">
+                                <p class="mb-2 font-bold text-pink-700">활용 목적:</p>
+                                <p class="mb-4">영어 에세이나 사회적 이슈에 대한 찬반(Agree/Disagree) 토론에 최적화되어 있습니다.</p>
+                            </div>
+                            <div class="flex-1 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="mb-3 font-bold text-slate-800"><i class="fas fa-list-ol text-pink-500 mr-2"></i>세부 절차 따라하기</p>
+                                <ol class="list-decimal list-inside space-y-2 ml-1 text-slate-600">
+                                    <li>패들렛 우측 상단 <b>'만들기'</b> > <b>'칼럼(Column)'</b> 형식 선택</li>
+                                    <li>칼럼 제목을 <b>[Pros(찬성)]</b>, <b>[Cons(반대)]</b>, <b>[Questions(질문)]</b>으로 각각 추가</li>
+                                    <li>우측 <b>톱니바퀴(설정)</b> 클릭 > <b>'참여'</b> 섹션에서 <b>'댓글'</b> 활성화</li>
+                                    <li>설정 창 <b>'반응'</b> 탭에서 <b>'좋아요' 또는 '별점'</b>으로 설정하여 동료 평가 시스템 구축</li>
+                                    <li>우측 상단 <b>'공유'</b> 아이콘 > 링크 복사 후 학생들에게 배포 및 활동 시작</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-5 rounded-xl cursor-pointer border border-slate-200">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 시험 기간 익명 Q&A 담벼락 (그리드 레이아웃)</summary>
+                        <div class="mt-4 text-slate-700 leading-relaxed text-sm flex flex-col md:flex-row gap-6">
+                            <div class="flex-1">
+                                <p class="mb-2 font-bold text-pink-700">활용 목적:</p>
+                                <p class="mb-4">공개적으로 질문하기 부끄러워하는 고등학생들을 위한 비대면 온라인 질문방입니다. 내신 기간에 특히 유용합니다.</p>
+                            </div>
+                            <div class="flex-1 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="mb-3 font-bold text-slate-800"><i class="fas fa-list-ol text-pink-500 mr-2"></i>세부 절차 따라하기</p>
+                                <ol class="list-decimal list-inside space-y-2 ml-1 text-slate-600">
+                                    <li>패들렛 우측 상단 <b>'만들기'</b> > <b>'그리드(Grid)' 또는 '담벼락'</b> 형식 선택</li>
+                                    <li>우측 <b>톱니바퀴(설정)</b> 클릭 > <b>'게시물'</b> 섹션 이동</li>
+                                    <li><b>'작성자 및 타임스탬프 표시'</b> 토글 버튼 끄기 (완벽한 익명성 보장)</li>
+                                    <li>학생들이 자유롭게 질문(수특 지문 캡처 등)을 <b>+ 버튼</b>을 눌러 포스팅하도록 안내</li>
+                                    <li>교사 또는 정답을 아는 학생이 <b>'댓글'</b>로 명쾌한 해설 달아주기 (집단 지성 유도)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-5 rounded-xl cursor-pointer border border-slate-200">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 진로 탐색 및 동아리 활동 아카이브</summary>
+                        <div class="mt-4 text-slate-700 leading-relaxed text-sm flex flex-col md:flex-row gap-6">
+                            <div class="flex-1">
+                                <p class="mb-2 font-bold text-pink-700">활용 목적:</p>
+                                <p class="mb-4">생기부(세부능력 및 특기사항, 창체) 작성을 위한 훌륭한 데이터베이스가 되어 행정 업무를 혁신적으로 줄여줍니다.</p>
+                            </div>
+                            <div class="flex-1 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                                <p class="mb-3 font-bold text-slate-800"><i class="fas fa-list-ol text-pink-500 mr-2"></i>세부 절차 따라하기</p>
+                                <ol class="list-decimal list-inside space-y-2 ml-1 text-slate-600">
+                                    <li>패들렛 우측 상단 <b>'만들기'</b> > <b>'칼럼(Column)'</b> 형식 선택</li>
+                                    <li>각 칼럼의 제목을 <b>'학생 조별 이름'</b> 또는 <b>'개별 학생 이름'</b>으로 설정하여 할당</li>
+                                    <li>1년 동안 진행한 영문 기사 스크랩, 탐구 보고서 PDF, 발표 영상 등을 해당 칼럼 아래에 지속적으로 누적 업로드 지도</li>
+                                    <li>학기 말, 우측 <b>'공유'</b> > <b>'PDF로 내보내기'</b> 클릭하여 1년 치 포트폴리오 문서화 및 생기부 참고 자료로 활용</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Gemini Section (Core & Merged) -->
+        <section id="gemini" class="bg-white rounded-3xl p-8 shadow-sm border-t-8 border-blue-500 scroll-mt-24">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-blue-100 text-blue-600 p-4 rounded-2xl text-3xl"><i class="fas fa-brain"></i></div>
+                <div>
+                    <h2 class="text-3xl font-bold">3. Gemini (제미나이) 통합 프롬프트 백과</h2>
+                    <p class="text-slate-500">교과 업무부터 행정, 구글 폼 생성까지! 아래 복사 버튼을 눌러 바로 활용하세요.</p>
+                </div>
+            </div>
+
+            <!-- 기본 영어 교과 특화 -->
+            <div class="space-y-6">
+                <h3 class="text-2xl font-bold text-slate-800 mt-10 mb-4 border-l-4 border-blue-500 pl-3">📌 영어 교과 특화 기능</h3>
+                <!-- 독해 지문 생성 -->
+                <div class="prompt-box p-6 rounded-2xl">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg text-blue-800">✅ 1. 수준별 영문 독해 지문 및 수능형 문제 제작</h4>
+                        <button onclick="copyToClipboard('prompt_reading')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 text-sm font-bold transition"><i class="fas fa-copy"></i> 복사</button>
+                    </div>
+                    <p class="text-slate-600 text-sm mb-4">교과서 외부 지문이 필요할 때 단어 수준까지 통제하여 생성합니다.</p>
+                    <textarea id="prompt_reading" class="w-full bg-white border border-slate-200 rounded-lg p-4 text-slate-700 h-32 focus:outline-none resize-none">너는 15년 경력의 베테랑 고등학교 영어 교사야.
+고등학교 2학년 수준(Lexile 지수 900~1000)으로 '인공지능이 환경에 미치는 긍정적 영향'에 대한 150단어 분량의 영어 독해 지문을 작성해줘. 
+그 후, 이 지문을 활용하여 수능 영어 영역 스타일의 1) 주제 추론 문제 1개, 2) 빈칸 추론 문제 1개를 5지 선다형(영문 보기)으로 출제해.
+마지막에 정답과 상세한 한국어 해설을 표 형태로 정리해줘.</textarea>
+                </div>
+
+                <!-- 듣기/말하기 대본 -->
+                <div class="prompt-box p-6 rounded-2xl mt-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-lg text-blue-800">✅ 2. 상황별 듣기/역할극(Role-play) 스크립트 제작</h4>
+                        <button onclick="copyToClipboard('prompt_script')" class="bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200 text-sm font-bold transition"><i class="fas fa-copy"></i> 복사</button>
+                    </div>
+                    <textarea id="prompt_script" class="w-full bg-white border border-slate-200 rounded-lg p-4 text-slate-700 h-24 focus:outline-none resize-none">공항 출입국 심사대(Immigration) 상황을 주제로 심사관과 여행객 사이의 자연스러운 영어 대화문을 A, B 형식으로 10회 주고받는 분량으로 작성해줘. 중학생 3학년이 이해할 수 있는 쉬운 어휘를 사용하고, 대화 도중 여행객이 약간의 문제가 생겨 당황하지만 잘 해결되는 갈등 요소를 하나 넣어줘. 핵심 표현 5가지도 표로 정리해줘.</textarea>
+                </div>
+            </div>
+
+            <!-- 광주아이온 통합 연수 자료 내용 병합 (Gemini Deep Dive) -->
+            <div class="mt-16 pt-8 border-t-2 border-dashed border-slate-200">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 border-l-4 border-blue-500 pl-3">💎 만능 조수, Gemini 활용법 (Deep Dive & 통합 팁)</h3>
+                
+                <div class="content-card mb-8">
+                    <div class="card-header bg-blue-50/20"><h3 class="text-xl font-bold flex items-center gap-4">🌐 2-1. 확장 프로그램 (@ 기능) & 2-2. Gems</h3></div>
+                    <div class="card-body">
+                        <div class="grid md:grid-cols-2 gap-10 text-base">
+                            <div class="space-y-4">
+                                <p class="text-slate-500 italic font-bold text-sm">@ 기능을 통한 실시간 정보 통합</p>
+                                <div class="prompt-block"><button class="copy-button" onclick="copyPrompt(this)">복사</button><code>🗺️ @Google 지도 경주 2박 3일 수학여행 유적지 중심 동선을 짜줘.<br>📂 @Google Drive 내 드라이브의 '2025 평가계획.pdf'를 요약해줘.<br>▶️ @YouTube 셰익스피어 '햄릿' 고등학생용 영상을 찾아줘.</code></div>
+                            </div>
+                            <div class="bg-gradient-to-br from-slate-50 to-blue-50 p-8 rounded-[2.5rem] border-2 border-blue-50 flex flex-col justify-center">
+                                <h4 class="font-bold mb-5 text-blue-900 text-xl"><i data-lucide="gem" class="w-6 h-6 text-blue-500 inline mr-2"></i> 나만의 맞춤 AI, Gems</h4>
+                                <a href="https://docs.google.com/document/d/1_cMlocJy6_aQtAlNV_2849dBexmda2em83JcyyVFego/edit?usp=sharing" target="_blank" class="text-base font-bold text-blue-600 underline mb-3 hover:text-blue-800 flex items-center gap-2 font-black">시나리오 1: 프롬프트 생성기 Gem <i data-lucide="external-link" class="w-4 h-4"></i></a>
+                                <a href="https://docs.google.com/document/d/1fTQPAb03shktczEXn5GoF6z5MynslI9e1TpNE-Vvlj8/edit?usp=sharing" target="_blank" class="text-base font-bold text-blue-600 underline hover:text-blue-800 flex items-center gap-2 font-black">시나리오 2: 만능 양식 생성기 Gem <i data-lucide="external-link" class="w-4 h-4"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card border-2 border-blue-100 shadow-xl mb-8">
+                    <div class="card-header bg-blue-50/50"><h3 class="text-xl font-bold"><i data-lucide="clipboard-list" class="text-blue-500 inline mr-2"></i> 2-3. 구글 설문지(Forms) 제작 자동화</h3></div>
+                    <div class="card-body">
+                        <div class="bg-slate-900 text-white p-6 rounded-2xl mb-8 border border-slate-700">
+                            <p class="font-bold text-lg mb-2 text-amber-400 flex items-center gap-2"><i data-lucide="alert-circle"></i> 필수 사전 준비</p>
+                            <p class="text-sm opacity-90 leading-relaxed font-medium mb-4">Google Forms에서 Gemini를 쓰려면 <a href="https://myaccount.google.com/language" target="_blank" class="text-amber-300 underline font-bold hover:text-white transition">구글 언어 설정(클릭)</a>을 'English (United States)'로 변경하고 Workspace Labs에 가입해야 합니다.</p>
+                            <div class="pro-tip italic bg-blue-50 text-blue-900 border-l-blue-500 p-4 mt-2">
+                                "한글 결과물을 원하신다면 프롬프트 끝에 <code class="text-blue-700 font-black">Please output all text in Korean.</code>를 꼭 붙여주세요!"
+                            </div>
+                        </div>
+                        <h4 class="font-bold text-slate-700 mb-3 text-lg">✨ 실행 프롬프트 예시</h4>
+                        <div class="prompt-block">
+                            <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                            <code>Create a survey for 2nd-grade high school students about their preferred destination for a school trip. Include destination choices (Jeju, Gyeongju, Busan, Gangwon-do) and reasons for their choice. Please output all text in Korean.</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card shadow-2xl border-4 border-slate-900 bg-slate-900 text-white mb-8">
+                    <div class="card-header bg-slate-800 border-slate-700 py-6"><h3 class="text-2xl font-bold flex items-center gap-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-blue-300"><i data-lucide="presentation" class="text-blue-400 w-8 h-8"></i> 2-4. 수업 자료 제작 7단계 자동화</h3></div>
+                    <div class="card-body">
+                        <p class="mb-8 text-slate-300 text-lg font-medium italic leading-relaxed">"내용 구성부터 스크립트까지 단 7단계로 완성하세요!"</p>
+                        <div class="grid lg:grid-cols-2 gap-12 text-[14px]">
+                            <div class="bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10">
+                                <ol class="space-y-4 font-medium text-slate-200">
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">1.</b> <span>Gemini 채팅창에서 주제별 슬라이드 <b>내용 구성</b> 요청</span></li>
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">2.</b> <span>구글 슬라이드 우측 상단 <b>'제미나이(✨)'</b> 패널 열기</span></li>
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">3.</b> <span>'Generate an image' 클릭 후 <b>영어 이미지 프롬프트</b> 입력</span></li>
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">4.</b> <span>이미지 선택 후 <b>`Insert as background`</b> 설정</span></li>
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">5.</b> <span>초안 내용 복사 후 <b>`Create slide`</b> 반복</span></li>
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">6.</b> <span>테마/레이아웃으로 <b>디자인 일관성</b> 적용</span></li>
+                                    <li class="flex gap-4"><b class="text-blue-400 shrink-0 font-black">7.</b> <span>"스크립트 작성해줘" 요청으로 <b>발표자 노트</b> 삽입</span></li>
+                                </ol>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="prompt-block text-xs bg-slate-950 border-slate-800">
+                                    <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                                    <span class="text-blue-400 font-black mb-1 block">[Step 1] 내용 구성</span>
+                                    <code>'조선 후기 사회의 변화'를 주제로 고등학생 대상 수업용 슬라이드 내용을 5장으로 구성해줘.</code>
+                                </div>
+                                <div class="prompt-block text-xs bg-slate-950 border-slate-800">
+                                    <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                                    <span class="text-blue-400 font-black mb-1 block">[Step 2] 배경 이미지</span>
+                                    <code>A vibrant market scene in the late Joseon Dynasty, digital art style, high quality presentation background, cinematic.</code>
+                                </div>
+                                <div class="prompt-block text-xs bg-slate-950 border-slate-800">
+                                    <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                                    <span class="text-blue-400 font-black mb-1 block">[Step 3] 발표 대본</span>
+                                    <code>지금까지 생성한 슬라이드를 바탕으로 고등학생들이 흥미를 느낄 수 있도록 재미있는 톤으로 발표 스크립트를 작성해줘.</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 유치원 연수 자료 병합 부분 대체 (고등학교 특화) -->
+            <div class="mt-16 pt-8 border-t-2 border-dashed border-slate-200">
+                <div class="mb-10">
+                    <h4 class="text-2xl font-bold text-indigo-600 mb-4">🤖 아이디어 발전소, Gemini (수능 및 진학 지도 팁)</h4>
+                    <details class="bg-gray-50 p-4 rounded-lg cursor-pointer mb-4">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ Gemini의 똑똑한 @ 기능 활용하기 (심화)</summary>
+                        <div class="mt-4 text-gray-700 leading-relaxed">
+                            <p>Gemini의 '@' 기능을 사용해 유튜브 강연을 영어 수업 토론 자료로 순식간에 변환하세요.</p>
+                            <div class="prompt-card p-4 rounded-lg mt-4">
+                                <p class="font-bold text-gray-800 mb-2">TED 영상 요약 및 심화 토론 질문 생성</p>
+                                <div class="flex justify-between items-start gap-2">
+                                    <p class="text-gray-700 flex-1" id="prompt-gemini-at">@YouTube [TED 강연 영상 링크] 이 영상을 고등학교 2학년 영어 수업용으로 활용하려고 해. 핵심 내용을 영어로 3줄 요약하고, 학생들이 소그룹 토론을 할 수 있는 찬반 토론용 심화 질문(영문) 3가지를 만들어 줘.</p>
+                                    <button class="copy-btn bg-pink-400 text-white px-3 py-1 rounded-full text-sm font-bold hover:bg-pink-500" data-target="prompt-gemini-at">복사</button>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 나만의 AI 비서 만들기, Gems (진학/생기부 전문 교사 설정)</summary>
+                        <div class="mt-4 text-gray-700 leading-relaxed">
+                            <p>Gems는 Gemini에게 역할을 부여하는 기능입니다. 진학 상담 및 생기부 전문 비서를 만들어보세요!</p>
+            <div class="mt-12 bg-blue-50 rounded-2xl p-8 border border-blue-100 flex flex-col items-center text-center">
+                <h4 class="text-xl font-bold text-blue-800 mb-2"><i class="fas fa-link mr-2"></i> Gemini 바로가기 다이렉트 링크</h4>
+                <p class="text-slate-600 text-sm mb-6">강의 중 바로 클릭하여 시연하고 실습하실 수 있습니다.</p>
+                <div class="flex flex-col md:flex-row justify-center gap-4 w-full max-w-5xl flex-wrap">
+                    <a href="https://gemini.google.com" target="_blank" class="flex-1 min-w-[200px] bg-blue-600 text-white px-6 py-4 rounded-xl font-bold hover:bg-blue-700 transition shadow-md flex items-center justify-center">
+                        <i class="fas fa-brain mr-2 text-xl"></i> Gemini 메인 접속
+                    </a>
+                    <a href="https://gemini.google.com/gems" target="_blank" class="flex-1 min-w-[200px] bg-indigo-600 text-white px-6 py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-md flex items-center justify-center">
+                        <i class="fas fa-gem mr-2 text-xl"></i> 나만의 Gems 만들기
+                    </a>
+                    <a href="https://myaccount.google.com/language" target="_blank" class="flex-1 min-w-[200px] bg-amber-500 text-white px-6 py-4 rounded-xl font-bold hover:bg-amber-600 transition shadow-md flex items-center justify-center">
+                        <i class="fas fa-globe mr-2 text-xl"></i> 구글 언어 설정<br><span class="text-xs font-normal ml-1">(English 변경)</span>
+                    </a>
+                    <a href="https://workspace.google.com/labs-sign-up/" target="_blank" class="flex-1 min-w-[200px] bg-emerald-600 text-white px-6 py-4 rounded-xl font-bold hover:bg-emerald-700 transition shadow-md flex items-center justify-center">
+                        <i class="fas fa-flask mr-2 text-xl"></i> Workspace Labs 가입<br><span class="text-xs font-normal ml-1">(구글 폼 자동화용)</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. NotebookLM Section (Core & Merged) -->
+        <section id="notebooklm" class="bg-white rounded-3xl p-8 shadow-sm border-t-8 border-indigo-500 scroll-mt-24">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-indigo-100 text-indigo-600 p-4 rounded-2xl text-3xl"><i class="fas fa-book-reader"></i></div>
+                <div>
+                    <h2 class="text-3xl font-bold">4. NotebookLM: 나만의 전담 연구원 & 비서</h2>
+                    <p class="text-slate-500">PDF, 교과서, 논문 등을 업로드하면 AI가 그 문서 안에서만 정답을 찾아냅니다.</p>
+                </div>
+            </div>
+
+            <!-- 광주아이온 병합 내용 (1-1 ~ 1-4) -->
+            <div class="space-y-8 mt-10">
+                <div class="content-card">
+                    <div class="card-header bg-blue-50/20"><h3 class="text-xl text-blue-900 font-bold flex items-center gap-3"><i data-lucide="school" class="text-blue-500 w-6 h-6"></i> 1-1. 우리 학교 맞춤형 챗봇 만들기</h3></div>
+                    <div class="card-body">
+                        <p class="mb-4 text-slate-600 font-medium leading-relaxed">학교 규정, 학사일정, 공문을 업로드하여 질문에 즉시 답하는 나만의 학교 전문가 챗봇을 만들어보세요.</p>
+                        <h4 class="font-bold text-slate-700 mb-2"><i data-lucide="terminal" class="w-5 h-5 inline text-blue-400"></i> 실행 프롬프트 예시</h4>
+                        <div class="prompt-block">
+                            <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                            <code>- 2학년 현장체험학습 신청 마감일이 언제야?<br>- 스마트폰 사용 적발 시 징계 규정을 알려줘.<br>- 올해 여름방학 시작일과 개학일은?</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header bg-pink-50/20"><h3 class="text-xl text-pink-900 font-bold flex items-center gap-3"><i data-lucide="user-plus" class="text-pink-500 w-6 h-6"></i> 1-2. 학생부 기록(세특) 시간 단축</h3></div>
+                    <div class="card-body">
+                        <p class="mb-4 text-slate-600 font-medium leading-relaxed">학생의 활동 보고서를 소스로 추가하여, 개별 학생의 특성이 드러나는 세특 초안을 빠르게 생성합니다.</p>
+                        <div class="prompt-block">
+                            <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                            <code>- 이 학생의 탐구 보고서를 바탕으로, 과학적 탐구 역량과 심화 학습 태도가 드러나는 세특 초안을 1~2문장으로 작성해 줘. 데이터 분석 능력이 돋보이도록.</code>
+                        </div>
+                        <div class="pro-tip mt-4 bg-blue-50 border-l-blue-400 text-blue-900 text-sm"><strong>💡 Pro-Tip:</strong> AI 초안은 '참고 자료'입니다. 선생님의 관찰을 더해 기록을 완성하세요.</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="content-card border-b-[8px] border-b-blue-100 mb-0">
+                        <div class="card-header"><h3 class="text-lg text-blue-800 font-bold flex items-center gap-2"><i data-lucide="layout-list"></i> 1-3. 평가 계획 초안 작성</h3></div>
+                        <div class="card-body">
+                            <p class="mb-4 text-slate-600 text-sm font-bold">성취기준, 작년 평가계획 파일을 소스로 새로운 학년도 초안을 만듭니다.</p>
+                            <div class="prompt-block text-xs">
+                                <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                                <code>- 업로드된 '성취기준'과 '2024 평가계획'을 바탕으로, 2025학년도 '확률과 통계' 1학기 평가 계획 초안을 표 형식으로 작성해 줘. (지필 1회, 수행 2회)</code>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="content-card border-b-[8px] border-b-pink-100 mb-0">
+                        <div class="card-header"><h3 class="text-lg text-pink-800 font-bold flex items-center gap-2"><i data-lucide="edit-3"></i> 1-4. 평가 문항 & 루브릭 제작</h3></div>
+                        <div class="card-body">
+                            <p class="mb-4 text-slate-600 text-sm font-bold">교과서 PDF를 소스로 추가하여 지필/수행평가 문항 아이디어와 루브릭을 생성합니다.</p>
+                            <div class="prompt-block text-xs">
+                                <button class="copy-button" onclick="copyPrompt(this)">복사</button>
+                                <code>- (문항 요청) '통합사회 5단원' 내용으로 비판적 사고력 평가용 서술형 문항 3개 만들어 줘.<br>- (기준표 요청) 2번 문항의 채점 기준표를 표로 만들어 줘.</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 유치원 연수 자료 병합 대체 (고등학교 심화) -->
+            <div class="mt-16 pt-8 border-t-2 border-dashed border-slate-200">
+                <h4 class="text-2xl font-bold text-indigo-600 mb-4">📚 고등학교 운영 및 입시 지도를 위한 NotebookLM 활용 팁</h4>
+                <div class="space-y-4">
+                    <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 모의고사 및 수능 지문 심층 분석</summary>
+                        <div class="mt-4 text-gray-700 leading-relaxed">
+                            <p>평가원 기출문제나 EBS 수능특강 PDF를 업로드하여 오답 분석과 변형 문제를 추출하세요.</p>
+                            <div class="prompt-card p-4 rounded-lg mt-4">
+                                <div class="flex justify-between items-start gap-2">
+                                    <p class="text-gray-700 flex-1" id="prompt-nb-1">업로드된 [고3 6월 모의평가 영어영역] PDF에서 학생들이 가장 헷갈려 할 만한 고난도 지문 3개를 뽑고, 각 문항별로 매력적인 오답을 선택하는 이유와 그것을 타파할 논리적 근거를 설명해 줘.</p>
+                                    <button class="copy-btn bg-pink-400 text-white px-3 py-1 rounded-full text-sm font-bold hover:bg-pink-500" data-target="prompt-nb-1">복사</button>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 탐구 보고서 기반 맞춤형 세특 추출</summary>
+                        <div class="mt-4 text-gray-700 leading-relaxed">
+                            <div class="prompt-card p-4 rounded-lg">
+                                <div class="flex justify-between items-start gap-2">
+                                    <p class="text-gray-700 flex-1" id="prompt-nb-2">학생이 제출한 [기후변화와 경제적 파급효과 탐구보고서]를 바탕으로, 경제와 영어 교과가 융합된 심화 탐구 역량이 돋보이도록 세특 초안 300자를 작성해 줘. 보고서의 핵심 키워드를 반드시 포함할 것.</p>
+                                    <button class="copy-btn bg-pink-400 text-white px-3 py-1 rounded-full text-sm font-bold hover:bg-pink-500" data-target="prompt-nb-2">복사</button>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    <details class="bg-gray-50 p-4 rounded-lg cursor-pointer">
+                        <summary class="font-bold text-lg text-gray-800">▶︎ 학부모 진학 상담 및 대입 전략 분석</summary>
+                        <div class="mt-4 text-gray-700 leading-relaxed">
+                            <div class="prompt-card p-4 rounded-lg">
+                                <div class="flex justify-between items-start gap-2">
+                                    <p class="text-gray-700 flex-1" id="prompt-nb-3">업로드된 [2026학년도 주요 대학 입학 전형 계획] 문서를 바탕으로, 내신 3점대 초반에 영어/사회 성적이 우수한 문과 학생에게 추천할 만한 수시(학생부교과/종합) 지원 전략 3가지를 학부모 상담용으로 요약해 줘.</p>
+                                    <button class="copy-btn bg-pink-400 text-white px-3 py-1 rounded-full text-sm font-bold hover:bg-pink-500" data-target="prompt-nb-3">복사</button>
+                                </div>
+            <div class="mt-12 bg-indigo-50 rounded-2xl p-8 border border-indigo-100 flex flex-col items-center text-center">
+                <h4 class="text-xl font-bold text-indigo-800 mb-2"><i class="fas fa-link mr-2"></i> NotebookLM 바로가기 다이렉트 링크</h4>
+                <p class="text-slate-600 text-sm mb-6">클릭 시 논문/PDF 분석 특화 페이지로 즉시 이동합니다.</p>
+                <div class="flex justify-center w-full max-w-md">
+                    <a href="https://notebooklm.google.com" target="_blank" class="w-full bg-indigo-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-md flex items-center justify-center text-lg">
+                        <i class="fas fa-book-reader mr-3 text-2xl"></i> NotebookLM 시작하기
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-10 mt-20 border-t border-slate-700 text-center">
+        <p class="mb-3">© 2026 AI & EdTech Master Class for Teachers.</p>
+        <p class="text-sm mb-5">본 웹페이지는 선생님들의 원활한 실습과 복습을 위해 모든 기능이 통합 제작되었습니다. 자유롭게 활용하세요!</p>
+        <p class="text-lg font-bold text-pink-300 tracking-wide transition hover:scale-105 inline-block cursor-default">🐰 Made with love by pcteachpc 🌸</p>
+    </footer>
+
+    <!-- Toast Notification (Copied) -->
+    <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-slate-900 text-green-400 px-6 py-3 rounded-full opacity-0 transition-opacity duration-300 pointer-events-none shadow-xl flex items-center font-bold z-50">
+        <i class="fas fa-check-circle mr-2"></i> 복사 완료! ✨
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Copy function for Textareas (Original)
+        function copyToClipboard(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showGlobalToast();
+        }
+
+        // Copy function for .prompt-block (AION style)
+        function copyPrompt(btn) {
+            const promptText = btn.nextElementSibling ? btn.nextElementSibling.innerText.replace(/<br>/g, '\n') : btn.innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = promptText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showGlobalToast();
+                animateButton(btn);
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+
+        // Copy Event Listeners for .copy-btn (Kindergarten style)
+        document.addEventListener('DOMContentLoaded', () => {
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            copyButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.dataset.target;
+                    const targetElement = document.getElementById(targetId);
+                    const textToCopy = targetElement.innerText;
+                    
+                    const textArea = document.createElement('textarea');
+                    textArea.value = textToCopy;
+                    textArea.style.position = 'fixed';
+                    textArea.style.top = '-9999px';
+                    textArea.style.left = '-9999px';
+                    
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    
+                    try {
+                        const successful = document.execCommand('copy');
+                        if (successful) {
+                            const originalText = button.innerText;
+                            button.innerText = '복사 완료!';
+                            button.classList.add('copied');
+                            showGlobalToast();
+                            setTimeout(() => {
+                                button.innerText = originalText;
+                                button.classList.remove('copied');
+                            }, 1500);
+                        }
+                    } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                    }
+                    document.body.removeChild(textArea);
+                });
+            });
+        });
+
+        // UI Helpers
+        function showGlobalToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 2500);
+        }
+
+        function animateButton(btn) {
+            const originalText = btn.innerText;
+            btn.innerText = '복사 완료! ✨';
+            btn.style.backgroundColor = '#3b82f6';
+            setTimeout(() => { 
+                btn.innerText = originalText; 
+                btn.style.backgroundColor = ''; 
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
